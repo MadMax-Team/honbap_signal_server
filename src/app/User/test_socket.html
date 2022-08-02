@@ -87,6 +87,7 @@
     }
     console.log("joinRoom>>", roomid)
     // 이거 추가하면 같은 방에 join 했을 때만 메세지 받아옴.
+    socket.emit('leave', joinedRoom);
     joinedRoom = roomid;
     $('#status').text("Joined : " + joinedRoom)
 
@@ -97,7 +98,7 @@
     console.log("makeJoin>>", roomid)
     socket.emit('join', roomid, () => {
       console.log("joinedRoom>>", joinedRoom)
-      socket.emit('leave', joinedRoom);
+      // socket.emit('leave', joinedRoom);
       joinedRoom = roomid;
       $('#status').text("Joined : " + joinedRoom)
       displayRooms();
