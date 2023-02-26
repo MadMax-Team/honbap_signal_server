@@ -11,6 +11,8 @@ const { errResponse } = require("../../../config/response");
 
 const jwt = require("jsonwebtoken");
 const { connect } = require("http2");
+const { Signaling } = require('../../../models');
+const { authorize } = require("passport");
 
 
 // 시그널 등록
@@ -21,13 +23,18 @@ exports.createSignal = async function (userIdx, sigPromiseTime, sigPromiseArea) 
         if(sigPromiseTime == "" && sigPromiseArea == "") {
             checkSigWrite = 0;
         }
-
-        const signalRows = [userIdx, sigPromiseTime, sigPromiseArea, checkSigWrite];
-        const connection = await pool.getConnection(async (conn) => conn);
+        console.log("userIdx", userIdx);
+        Signaling.create({
+            userIdx: 1,
+            //userIdx: userIdx,
+            sigStatus: 0,
+            sigMatchStatus: 0,
+            sigPromiseTime: sigPromiseTime,
+            sigPromiseArea: sigPromiseArea,
+            updateAt: "2023"
+            //checkSigWrite: null
+        });
         
-        const createSignalResult = await signalDao.insertSignal(connection, signalRows);
-
-        connection.release();
         return response(baseResponse.SUCCESS);
     }
     catch (err) {

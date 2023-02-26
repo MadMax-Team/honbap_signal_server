@@ -4,6 +4,7 @@ module.exports = function(sequelize, DataTypes) {
     signalIdx: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      autoIncrement: true,
       primaryKey: true
     },
     userIdx: {
@@ -42,7 +43,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     sequelize,
     tableName: 'Signaling',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",
