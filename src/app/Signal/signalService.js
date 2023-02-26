@@ -27,7 +27,7 @@ exports.createSignal = async function (userIdx, sigPromiseTime, sigPromiseArea) 
         Signaling.create({
             userIdx: 1,
             //userIdx: userIdx,
-            sigStatus: 0,
+            sigStatus: 1,
             sigMatchStatus: 0,
             sigPromiseTime: sigPromiseTime,
             sigPromiseArea: sigPromiseArea,
