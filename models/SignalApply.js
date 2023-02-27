@@ -13,7 +13,8 @@ module.exports = function(sequelize, DataTypes) {
     signalIdx: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
+      // autoIncrement: true,
+      // primaryKey: true,
       references: {
         model: 'Signaling',
         key: 'signalIdx'

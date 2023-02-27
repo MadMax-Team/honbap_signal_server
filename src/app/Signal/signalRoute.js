@@ -3,9 +3,21 @@ module.exports = function (app) {
     const jwtMiddleware = require("../../../config/jwtMiddleware");
     //client와 통신 부분.
   
-    // 시그널 생성 1 
+    // 시그널 ON (생성)
     app.post("/signal/list", jwtMiddleware, signal.postSignal);
 
+    // 시그널 OFF
+    app.patch("/signal/list/off", jwtMiddleware, signal.SigStatusOff);
+
+    // 시그널 신청
+    app.post("/signal/applylist", jwtMiddleware, signal.postSignalApply);
+
+    // 시그널 신청 취소 
+    app.delete("/signal/applylist", jwtMiddleware, signal.cancelSignalApply);
+
+    // 시그널 거절
+
+    //--------------------
     // 켜져 있는 시그널 확인 2
     app.get("/signal/list", jwtMiddleware, signal.getSignalList);
 
@@ -15,9 +27,6 @@ module.exports = function (app) {
     // 시그널 매칭 잡혔을 때 4
     app.patch("/signal/list/matching", jwtMiddleware, signal.postSigMatch);
 
-    // 매칭된 거 제외 삭제 = 시그널 OFF 5
-    app.delete("/signal/list/off", jwtMiddleware, signal.SigStatusOff);
-
     // 모든 시그널 삭제 가능 6
     app.delete("/signal/list", jwtMiddleware, signal.deleteSignal);
 
@@ -26,12 +35,6 @@ module.exports = function (app) {
 
     // 시그널 신청 목록 조회 8
     app.get("/signal/applylist", jwtMiddleware, signal.getSignalApply);
-
-    // 시그널 신청 9
-    app.post("/signal/applylist", jwtMiddleware, signal.postSignalApply);
-
-    // 시그널 신청 취소 10
-    app.delete("/signal/applylist", jwtMiddleware, signal.cancelSignalApply);
 
     // 이전 시그널 조회 11
     app.get("/signal/listed", jwtMiddleware, signal.getEndSignals);

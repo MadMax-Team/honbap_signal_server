@@ -7,19 +7,22 @@ const chatService = require("../../app/Chat/chatService");
 const userProvider = require("../User/userProvider");
 
 const { response, errResponse } = require("../../../config/response");
-const logger = require("../../../config/winston");
+const { logger } = require("../../../config/winston");
 const crypto = require("crypto");
 const regexEmail = require("regex-email");
+
+const { Signaling } = require('../../../models');
+const { SignalApply } = require('../../../models');
 //controller : 판단 부분.
 
 /**
  * API No. 1
- * API Name : 시그널 생성 API
+ * API Name : 시그널 ON API
  * [POST] /signal/list
  */
 exports.postSignal = async function (req, res) {
   const userIdxFromJWT = req.verifiedToken.userIdx;
-  const { sigPromiseTime, sigPromiseArea} = req.body;
+  const { sigPromiseTime, sigPromiseArea } = req.body;
   // 주석처리 한 부분은 나중에 다시 수정할 예정
 /*
   if (!sigPromiseArea)
@@ -31,14 +34,87 @@ exports.postSignal = async function (req, res) {
   if (arzoneListResult.length <= 0)
     return res.send(response(baseResponse.LOCATION_IS_NOT_IN_ARZONE));
 */
-  const signalup = await signalService.createSignal(
-    userIdxFromJWT,
-    sigPromiseTime,
-    sigPromiseArea
-  );
+  
+  //[?] checkSigWrite 항목 추가 여부 
+  Signaling.create({
+    userIdx: 1,
+    //userIdx: userIdxFromJWT,
+    sigStatus: 1,
+    sigMatchStatus: 0,
+    sigPromiseTime: sigPromiseTime,
+    sigPromiseArea: sigPromiseArea,
+    updateAt: "2023"
+  }).then( result => {
+    return res.send(response(baseResponse.SUCCESS));
+  })
+  .catch( err => {
+    logger.error(err);
+  })
+};
+
+/**
+ * API No. 2
+ * API Name : 시그널 OFF API
+ * [] /signal/list/off
+ */
+exports.SigStatusOff = async function (req, res) {
+  const userIdxFromJWT = req.verifiedToken.userIdx;
 
   return res.send(baseResponse.SUCCESS);
 };
+
+/**
+ * API No. 3
+ * API Name : 시그널 신청 API
+ * [POST] /signal/applylist
+ */
+exports.postSignalApply = async function (req, res) {
+  const userIdxFromJWT = req.verifiedToken.userIdx;
+  const { signalIdx, applyedIdx } = req.body;
+  console.log(signalIdx, applyedIdx);
+
+  SignalApply.create({
+    signalIdx: signalIdx, 
+    applyedIdx: applyedIdx,
+    userIdx: 1,
+    //userIdx: userIdx
+  }).then( result => {
+    return res.send(response(baseResponse.SUCCESS));
+  })
+  // .catch( err => {
+  //   logger.error(err);
+  // })
+};
+
+/**
+ * API No. 4
+ * API Name : 시그널 신청 취소 API
+ * [DELETE] /signal/applylist
+ */
+exports.cancelSignalApply = async function (req, res) {
+  const userIdxFromJWT = req.verifiedToken.userIdx;
+  const { applyedIdx } = req.body;
+
+  const cancelSignal = await signalService.cancelSignalApply(
+    applyedIdx,
+    userIdxFromJWT
+  );
+  return res.send(baseResponse.SUCCESS);
+};
+
+/**
+ * API No. 5
+ * API Name : 시그널 거절 API (나에게 신청 온 시그널 거절)
+ * [] /signal/applylist
+ */
+exports.refuseSignalApply = async function (req, res) {
+  const userIdxFromJWT = req.verifiedToken.userIdx;
+  const { applyedIdx } = req.body;
+
+  return res.send(baseResponse.SUCCESS);
+};
+
+//---------------------------------
 
 /**
  * API No. 2
@@ -88,18 +164,6 @@ exports.postSigMatch = async function (req, res) {
 };
 
 /**
- * API No. 5
- * API Name : 시그널 OFF API
- * [DELETE] /signal/list/off
- */
-exports.SigStatusOff = async function (req, res) {
-  const userIdxFromJWT = req.verifiedToken.userIdx;
-
-  const signalOff = await signalService.signalOff(userIdxFromJWT);
-  return res.send(baseResponse.SUCCESS);
-};
-
-/**
  * API No. 6
  * API Name : 시그널 삭제 API
  * [DELETE] /signal/list
@@ -134,36 +198,6 @@ exports.getSignalApply = async function (req, res) {
 
   const result = await signalProvider.getSignalApply(userIdxFromJWT);
   return res.send(response(baseResponse.SUCCESS, result));
-};
-
-/**
- * API No. 9
- * API Name : 시그널 신청 API
- * [POST] /signal/applylist
- */
-exports.postSignalApply = async function (req, res) {
-  const userIdxFromJWT = req.verifiedToken.userIdx;
-  const { signalIdx, applyedIdx } = req.body;
-
-  const apply = await signalService.signalApply(signalIdx, applyedIdx, userIdxFromJWT);
-
-  return res.send(baseResponse.SUCCESS);
-};
-
-/**
- * API No. 10
- * API Name : 시그널 신청 취소 API
- * [DELETE] /signal/applylist
- */
-exports.cancelSignalApply = async function (req, res) {
-  const userIdxFromJWT = req.verifiedToken.userIdx;
-  const { applyedIdx } = req.body;
-
-  const cancelSignal = await signalService.cancelSignalApply(
-    applyedIdx,
-    userIdxFromJWT
-  );
-  return res.send(baseResponse.SUCCESS);
 };
 
 /**

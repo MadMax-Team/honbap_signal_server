@@ -12,10 +12,11 @@ const { errResponse } = require("../../../config/response");
 const jwt = require("jsonwebtoken");
 const { connect } = require("http2");
 const { Signaling } = require('../../../models');
+const { SignalApply } = require('../../../models');
 const { authorize } = require("passport");
 
 
-// 시그널 등록
+// 시그널 On
 exports.createSignal = async function (userIdx, sigPromiseTime, sigPromiseArea) {
     try {
         let checkSigWrite = 1;
@@ -43,53 +44,52 @@ exports.createSignal = async function (userIdx, sigPromiseTime, sigPromiseArea) 
     }
 }
 
-// 시그널 정보 수정
-exports.modifySigList = async function (sigPromiseTime ,sigPromiseArea, sigStart, userIdx) {
-    try {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const params = [sigPromiseTime, sigPromiseArea, sigStart, userIdx];
-        const result = await signalDao.updateSignal(connection, params);
-        connection.release();
+// // 시그널 정보 수정
+// exports.modifySigList = async function (sigPromiseTime ,sigPromiseArea, sigStart, userIdx) {
+//     try {
+//         const connection = await pool.getConnection(async (conn) => conn);
+//         const params = [sigPromiseTime, sigPromiseArea, sigStart, userIdx];
+//         const result = await signalDao.updateSignal(connection, params);
+//         connection.release();
 
-        //return response(baseResponse.SUCCESS);
-        return result;
+//         //return response(baseResponse.SUCCESS);
+//         return result;
 
-    } catch (err) {
-        logger.error(`App - modifySigList Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-}
+//     } catch (err) {
+//         logger.error(`App - modifySigList Service error\n: ${err.message}`);
+//         return errResponse(baseResponse.DB_ERROR);
+//     }
+// }
 
-// 매칭 상대 업데이트
-exports.matching = async function (matchIdx, userIdx) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    try {
-        await connection.beginTransaction();
-        const params = [matchIdx, userIdx];
-        const user = userIdx;
+// // 매칭 상대 업데이트
+// exports.matching = async function (matchIdx, userIdx) {
+//     const connection = await pool.getConnection(async (conn) => conn);
+//     try {
+//         await connection.beginTransaction();
+//         const params = [matchIdx, userIdx];
+//         const user = userIdx;
 
-        const result = await signalDao.updateSigMatch(connection, params);
-        //const result2 = await signalDao.deleteSignalApply(connection, user);
+//         const result = await signalDao.updateSigMatch(connection, params);
+//         //const result2 = await signalDao.deleteSignalApply(connection, user);
 
-        await connection.commit();
+//         await connection.commit();
 
-        connection.release();
-        return result;
-    } catch (err) {
-        await connection.rollback();
-        connection.release();
-        logger.error(`App - matching Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-}
+//         connection.release();
+//         return result;
+//     } catch (err) {
+//         await connection.rollback();
+//         connection.release();
+//         logger.error(`App - matching Service error\n: ${err.message}`);
+//         return errResponse(baseResponse.DB_ERROR);
+//     }
+// }
 
 // 시그널 off
 exports.signalOff = async function (userIdx) {
     try {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const result = await signalDao.signalOff(connection, userIdx);
+        
+        
 
-        connection.release;
         return result;
     } catch (err) {
         logger.error(`App - signalOff Service error\n: ${err.message}`);
@@ -97,42 +97,46 @@ exports.signalOff = async function (userIdx) {
     }
 }
 
-// 시그널 삭제
-exports.deleteSignalList = async function (signalIdx, userIdx) {
-    try {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const params = [signalIdx, userIdx];
-        const result = await signalDao.deleteSignal(connection, params);
-        connection.release();
+// // 시그널 삭제
+// exports.deleteSignalList = async function (signalIdx, userIdx) {
+//     try {
+//         const connection = await pool.getConnection(async (conn) => conn);
+//         const params = [signalIdx, userIdx];
+//         const result = await signalDao.deleteSignal(connection, params);
+//         connection.release();
 
-        return result;
-    } catch(err) {
-        logger.error(`App - deleteSignalList Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-}
+//         return result;
+//     } catch(err) {
+//         logger.error(`App - deleteSignalList Service error\n: ${err.message}`);
+//         return errResponse(baseResponse.DB_ERROR);
+//     }
+// }
 
-// 시그널 on
-exports.signalOn = async function (userIdx) {
-    try {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const result = await signalDao.signalOn(connection, userIdx);
+// // 시그널 on
+// exports.signalOn = async function (userIdx) {
+//     try {
+//         const connection = await pool.getConnection(async (conn) => conn);
+//         const result = await signalDao.signalOn(connection, userIdx);
 
-        connection.release;
-        return result;
-    } catch (err) {
-        logger.error(`App - signalOn Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-}
+//         connection.release;
+//         return result;
+//     } catch (err) {
+//         logger.error(`App - signalOn Service error\n: ${err.message}`);
+//         return errResponse(baseResponse.DB_ERROR);
+//     }
+// }
 
 // 시그널 리스트 신청
 exports.signalApply = async function (signalIdx, applyedIdx, userIdx) {
     try {
-        const params = [signalIdx, applyedIdx, userIdx];
-        const connection = await pool.getConnection(async (conn) => conn);
-        const result = await signalDao.postSignalApply(connection, params);
-        connection.release;
+
+        SignalApply.create({
+            signalIdx: signalIdx, 
+            applyedIdx: applyedIdx,
+            userIdx: 1,
+            //userIdx: userIdx
+        })
+
         return result;
     } catch (err) {
         logger.error(`App - signalApply Service error\n: ${err.message}`);
