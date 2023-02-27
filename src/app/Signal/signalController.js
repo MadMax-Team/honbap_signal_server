@@ -11,7 +11,7 @@ const { logger } = require("../../../config/winston");
 const crypto = require("crypto");
 const regexEmail = require("regex-email");
 
-const { Signaling } = require('../../../models');
+const { Signaling, sequelize } = require('../../../models');
 const { SignalApply } = require('../../../models');
 //controller : 판단 부분.
 
@@ -59,8 +59,32 @@ exports.postSignal = async function (req, res) {
  */
 exports.SigStatusOff = async function (req, res) {
   const userIdxFromJWT = req.verifiedToken.userIdx;
+  const t = await sequelize.transation();
 
-  return res.send(baseResponse.SUCCESS);
+  try {
+    await sequelize.transation(async (t) => {
+      await SignalApply.destroy({
+        where: {
+          //userIdx: userIdxFromJWT
+          userIdx: 1
+        },
+        transation: t,
+      });
+  
+      await Signaling.destrop({
+        where: {
+          //userIdx: userIdxFromJWT
+          userIdx: 1,
+          sigStatus: 1,
+          sigMatchStatus: 0
+        }, 
+        transation: t,
+      });
+    });
+  } catch(err) {
+
+  }
+  //return res.send(baseResponse.SUCCESS);
 };
 
 /**
