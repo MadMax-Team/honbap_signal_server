@@ -3,9 +3,10 @@ const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const { response, errResponse } = require("../../../config/response");
-const logger = require("../../../config/winston");
+const { logger } = require('../../../config/winston');
 const crypto = require("crypto");
 const regexEmail = require("regex-email");
+const { User } = require('../../../models');
 
 //const secret_config = require('secret') // 이거 때문에 Enter text to encrypt 입력창 생성.
 const jwt = require("../../../modules/jwt");
@@ -24,6 +25,7 @@ const secret_key = require("../../../config/secret_sms");
 
 const Cache = require("memory-cache");
 const CryptoJS = require("crypto-js");
+const { test } = require("regex-email");
 
 const date = Date.now().toString();
 const uri = secret_key.NCP_serviceID;
@@ -70,10 +72,10 @@ exports.signin = async function (req, res) {
  */
 
 exports.postUsers = async function (req, res) {
-  const { email, password, userName, nickName, birth, phoneNum, sex } =
+  const { userId, email, password, userName, birth, phoneNum, sex } =
     req.body;
   // email checking and print error message
-
+ 
   // 빈 값 체크
   if (!email) return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
   // 길이 체크
@@ -83,12 +85,12 @@ exports.postUsers = async function (req, res) {
   if (!regexEmail.test(email))
     return res.send(response(baseResponse.SIGNUP_EMAIL_TYPE_ERROR));
 
-  // nickName
+  // userName
 
   // 빈 값 체크
-  if (!nickName) return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
+  if (!userName) return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
   // 길이 체크
-  if (nickName.length > 10)
+  if (userName.length > 10)
     //VARCHAR(10) 이 한글로는 5자로 제한되는지 확인 필요
     return res.send(response(baseResponse.SIGNUP_NICKNAME_LENGTH));
 
@@ -103,21 +105,34 @@ exports.postUsers = async function (req, res) {
 
   // 빈 값 체크
   if (!password) return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY)); // 2010
-  if (!userName) return res.send(response(baseResponse.SIGNUP_USERNAME_EMPTY)); // 2011
+  // if (!userName) return res.send(response(baseResponse.SIGNUP_USERNAME_EMPTY)); // 2011
   if (!birth) return res.send(response(baseResponse.SIGNUP_BIRTH_EMPTY)); // 2012
   if (!sex) return res.send(response(baseResponse.SIGNUP_SEX_EMPTY)); // 2013
 
-  const signUpResponse = await userService.createUsers(
-    email,
-    password,
-    userName,
-    nickName,
-    birth,
-    phoneNum,
-    sex
-  );
-
-  return res.send(signUpResponse);
+  // const signUpResponse = await userService.createUsers(
+    // email,
+    // password,
+    // userName,
+    // nickName,
+    // birth,
+    // phoneNum,
+    // sex
+  // );
+  User.create({
+    userId : userId,
+    email: email,
+    password: password,
+    userName: userName,
+    birth: birth,
+    phoneNum: phoneNum,
+    sex: sex,
+  }).then( result => {
+    return res.send(response(baseResponse.SUCCESS));
+  })
+  .catch( err => {
+    logger.error(err);
+    // return res.send(errResponse(baseResponse.SIGNUP_INVALID_ID));
+  })
 };
 
 /**

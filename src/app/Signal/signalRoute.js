@@ -44,5 +44,4 @@ module.exports = function (app) {
     app.get("/mysignal", jwtMiddleware, signal.getMySignal);
 
     // 해당 닉네임의 유저 정보 조회 14
-    app.post("/signal/info", signal.getInfoFromNickName);
 };

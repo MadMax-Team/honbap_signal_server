@@ -1,9 +1,10 @@
-node_modules/*
+config/logs/*
+node_modules
 config/database.js
 config/secret.js
-log/*
-package.json
 package-lock.json
-log\.*
-/log
 *-audit.json
+docker-compose.yaml
+Dockerfile
+config/instantclient_19_8
+.DS_STORE

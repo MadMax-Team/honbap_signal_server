@@ -1,47 +1,42 @@
-const { createLogger, format, transports } = require('winston');
-require('winston-daily-rotate-file');
-const fs = require('fs');
+const winston = require('winston');
+const winstonDaily = require('winston-daily-rotate-file');
+const logDir = `${__dirname}/logs`;
+const { combine, timestamp, printf } = winston.format;
 
-const env = process.env.NODE_ENV || 'development';
-const logDir = 'log';
-
-// https://lovemewithoutall.github.io/it/winston-example/
-// Create the log directory if it does not exist
-if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir)
-}
-
-const dailyRotateFileTransport = new transports.DailyRotateFile({
-    level: 'debug',
-    filename: `${logDir}/%DATE%-smart-push.log`,
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: '20m',
-    maxFiles: '14d'
+// Define log format
+const logFormat = printf(info => {
+  return `${info.timestamp} ${info.level}: ${info.message}`;
 });
 
-const logger = createLogger({
-    level: env === 'development' ? 'debug' : 'info',
-    format: format.combine(
-        format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss'
-        }),
-        format.json()
-    ),
-    transports: [
-        new transports.Console({
-            level: 'info',
-            format: format.combine(
-                format.colorize(),
-                format.printf(
-                    info => `${info.timestamp} ${info.level}: ${info.message}`
-                )
-            )
-        }),
-        dailyRotateFileTransport
-    ]
+/*
+ * Log Level
+ * error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
+ */
+exports.logger = winston.createLogger({
+  format: combine(
+    timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss',
+    }),
+    logFormat,
+  ),
+  transports: [
+    // info 레벨 로그를 저장할 파일 설정
+    new winstonDaily({
+      level: 'info',
+      datePattern: 'YYYY-MM-DD',
+      dirname: logDir,
+      filename: `%DATE%.log`,
+      maxFiles: 30,  // 30일치 로그 파일 저장
+      zippedArchive: true, 
+    }),
+    // error 레벨 로그를 저장할 파일 설정
+    new winstonDaily({
+      level: 'error',
+      datePattern: 'YYYY-MM-DD',
+      dirname: logDir + '/error',  // error.log 파일은 /logs/error 하위에 저장 
+      filename: `%DATE%.error.log`,
+      maxFiles: 30,
+      zippedArchive: true,
+    }),
+  ],
 });
-
-module.exports = {
-    logger: logger
-};

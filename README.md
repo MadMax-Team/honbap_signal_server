@@ -1,6 +1,4 @@
 # honbap_signal_server
-welcome 웅!
-
 ## 프로젝트 소개 
 <img width="500" alt="스크린샷 2022-05-18 오전 2 02 29" src="https://user-images.githubusercontent.com/52239056/168870407-5b911965-4c09-4337-a956-0d1120bc05c5.png">
 
