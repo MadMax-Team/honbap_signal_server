@@ -18,33 +18,33 @@ module.exports = function (app) {
     // 시그널 거절
 
     //--------------------
-    // 켜져 있는 시그널 확인 2
-    app.get("/signal/list", jwtMiddleware, signal.getSignalList);
+    // // 켜져 있는 시그널 확인 2
+    // app.get("/signal/list", jwtMiddleware, signal.getSignalList);
 
-    // 시그널 수정 3
-    app.patch("/signal/list", jwtMiddleware, signal.postSignalList);
+    // // 시그널 수정 3
+    // app.patch("/signal/list", jwtMiddleware, signal.postSignalList);
 
-    // 시그널 매칭 잡혔을 때 4
-    app.patch("/signal/list/matching", jwtMiddleware, signal.postSigMatch);
+    // // 시그널 매칭 잡혔을 때 4
+    // app.patch("/signal/list/matching", jwtMiddleware, signal.postSigMatch);
 
-    // 모든 시그널 삭제 가능 6
-    app.delete("/signal/list", jwtMiddleware, signal.deleteSignal);
+    // // 모든 시그널 삭제 가능 6
+    // app.delete("/signal/list", jwtMiddleware, signal.deleteSignal);
 
-    // 시그널 다시 ON 7
-    app.patch("/signal/list/on", jwtMiddleware, signal.patchSigStatusOn);
+    // // 시그널 다시 ON 7
+    // app.patch("/signal/list/on", jwtMiddleware, signal.patchSigStatusOn);
 
-    // 시그널 신청 목록 조회 8
-    app.get("/signal/applylist", jwtMiddleware, signal.getSignalApply);
+    // // 시그널 신청 목록 조회 8
+    // app.get("/signal/applylist", jwtMiddleware, signal.getSignalApply);
 
-    // 이전 시그널 조회 11
-    app.get("/signal/listed", jwtMiddleware, signal.getEndSignals);
+    // // 이전 시그널 조회 11
+    // app.get("/signal/listed", jwtMiddleware, signal.getEndSignals);
 
 
-    // 주황색 유저를 위한 Signal Promise 및 time 수정
-    app.patch("/signal/list/orange", jwtMiddleware, signal.patchSignalContents);
+    // // 주황색 유저를 위한 Signal Promise 및 time 수정
+    // app.patch("/signal/list/orange", jwtMiddleware, signal.patchSignalContents);
 
-    // 내 시그널 ID 조회 13
-    app.get("/mysignal", jwtMiddleware, signal.getMySignal);
+    // // 내 시그널 ID 조회 13
+    // app.get("/mysignal", jwtMiddleware, signal.getMySignal);
 
-    // 해당 닉네임의 유저 정보 조회 14
+    // // 해당 닉네임의 유저 정보 조회 14
 };
