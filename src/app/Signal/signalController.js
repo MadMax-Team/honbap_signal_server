@@ -22,7 +22,7 @@ const { SignalApply } = require('../../../models');
  */
 exports.postSignal = async function (req, res) {
   const userIdxFromJWT = req.verifiedToken.userIdx;
-  const { sigPromiseTime, sigPromiseArea } = req.body;
+  const { promiseTime, promiseArea } = req.body;
   // 주석처리 한 부분은 나중에 다시 수정할 예정
 /*
   if (!sigPromiseArea)
@@ -41,8 +41,8 @@ exports.postSignal = async function (req, res) {
     //userIdx: userIdxFromJWT,
     sigStatus: 1,
     sigMatchStatus: 0,
-    sigPromiseTime: sigPromiseTime,
-    sigPromiseArea: sigPromiseArea,
+    promiseTime: promiseTime,
+    promiseArea: promiseArea,
     updateAt: "2023"
   }).then( result => {
     return res.send(response(baseResponse.SUCCESS));
@@ -59,7 +59,7 @@ exports.postSignal = async function (req, res) {
  */
 exports.SigStatusOff = async function (req, res) {
   const userIdxFromJWT = req.verifiedToken.userIdx;
-  const t = await sequelize.transation();
+  const t = await sequelize.transaction();
 
   try {
     await sequelize.transation(async (t) => {
@@ -94,11 +94,11 @@ exports.SigStatusOff = async function (req, res) {
  */
 exports.postSignalApply = async function (req, res) {
   const userIdxFromJWT = req.verifiedToken.userIdx;
-  const { signalIdx, applyedIdx } = req.body;
-  console.log(signalIdx, applyedIdx);
+  const { signalIdx } = req.body;
+  console.log(signalIdx);
 
   SignalApply.create({
-    signalIdx: 2,
+    signalIdx: 1,
     applyedIdx: 1,
     //signalIdx: signalIdx, 
     //applyedIdx: applyedIdx,

@@ -1,35 +1,27 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('SignalApply', {
+  return sequelize.define('UserHashTag', {
+    hashIdx: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'HashTag',
+        key: 'hashIdx'
+      }
+    },
     userIdx: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'User',
+        model: 'UserProfile',
         key: 'userIdx'
       }
-    },
-    signalIdx: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Signaling',
-        key: 'signalIdx'
-      }
-    },
-    applyIdx: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    trashIdx: {
-      type: DataTypes.INTEGER,
-      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'SignalApply',
+    tableName: 'UserHashTag',
     timestamps: false,
     indexes: [
       {
@@ -37,15 +29,15 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
+          { name: "hashIdx" },
           { name: "userIdx" },
-          { name: "signalIdx" },
         ]
       },
       {
-        name: "FK_Signaling_TO_SignalApply_1",
+        name: "FK_UserProfile_TO_UserHashTag_1",
         using: "BTREE",
         fields: [
-          { name: "signalIdx" },
+          { name: "userIdx" },
         ]
       },
     ]

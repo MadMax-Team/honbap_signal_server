@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Review', {
     reviewIdx: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -49,6 +50,14 @@ module.exports = function(sequelize, DataTypes) {
           { name: "reviewIdx" },
           { name: "signalIdx" },
           { name: "userIdx" },
+        ]
+      },
+      {
+        name: "Review_reviewIdx_uindex",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "reviewIdx" },
         ]
       },
       {

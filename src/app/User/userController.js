@@ -88,11 +88,11 @@ exports.postUsers = async function (req, res) {
   // nickName
 
   // 빈 값 체크
-  if (!nickName) return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
+  //if (!nickName) return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
   // 길이 체크
-  if (nickName.length > 10)
+  //if (nickName.length > 10)
     //VARCHAR(10) 이 한글로는 5자로 제한되는지 확인 필요
-    return res.send(response(baseResponse.SIGNUP_NICKNAME_LENGTH));
+    //return res.send(response(baseResponse.SIGNUP_NICKNAME_LENGTH));
 
   // phoneNum
 

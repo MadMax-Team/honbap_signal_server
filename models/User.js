@@ -34,10 +34,6 @@ module.exports = function(sequelize, DataTypes) {
     sex: {
       type: DataTypes.CHAR(11),
       allowNull: true
-    },
-    updateAt: {
-      type: DataTypes.DATE,
-      allowNull: true
     }
   }, {
     sequelize,
@@ -46,6 +42,14 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "userIdx" },
+        ]
+      },
+      {
+        name: "User_userIdx_uindex",
         unique: true,
         using: "BTREE",
         fields: [

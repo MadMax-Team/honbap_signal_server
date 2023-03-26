@@ -2,9 +2,9 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Signaling', {
     signalIdx: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true
     },
     userIdx: {
@@ -43,7 +43,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     sequelize,
     tableName: 'Signaling',
-    timestamps: false,
+    timestamps: true,
     indexes: [
       {
         name: "PRIMARY",
@@ -52,6 +52,14 @@ module.exports = function(sequelize, DataTypes) {
         fields: [
           { name: "signalIdx" },
           { name: "userIdx" },
+        ]
+      },
+      {
+        name: "Signaling_signalIdx_uindex",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "signalIdx" },
         ]
       },
       {

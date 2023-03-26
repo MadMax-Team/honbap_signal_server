@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('BlackList', {
     blackIdx: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -35,6 +36,14 @@ module.exports = function(sequelize, DataTypes) {
         fields: [
           { name: "blackIdx" },
           { name: "userIdx" },
+        ]
+      },
+      {
+        name: "BlackList_blackIdx_uindex",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "blackIdx" },
         ]
       },
       {
